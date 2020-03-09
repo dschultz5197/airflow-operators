@@ -1,4 +1,5 @@
 import logging
+from airflow.plugins_manager import AirflowPlugin
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
 from airflow.contrib.hooks.snowflake_hook import SnowflakeHook
@@ -40,6 +41,15 @@ class SnowflakeQueryOperator(BaseOperator):
         logging.info('File written to : {}'.format(path))
 
     def execute_no_results(self, hook):
+        # Not really needed because standard snowflake operator could do this, just added functionality for fun.
         logging.info('Executing query : {}'.format(self.snowflake_query))
         hook.run(self.snowflake_query)
         logging.info('Query execution complete.')
+        
+
+class SnowflakePlugin(AirflowPlugin):
+    name = 'ms_sql_plugin'
+
+    operators = [
+        SnowflakeQueryOperator
+    ]

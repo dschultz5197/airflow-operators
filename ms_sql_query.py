@@ -1,4 +1,5 @@
 import logging
+from airflow.plugins_manager import AirflowPlugin
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
 from airflow.hooks.mssql_hook import MsSqlHook
@@ -39,6 +40,15 @@ class MsSQLQueryOperator(BaseOperator):
         logging.info('File written to : {}'.format(path))
 
     def execute_no_results(self, hook):
+        # Not really needed because standard sql operator could do this, just added functionality for fun.
         logging.info('Executing query : {}'.format(self.mssql_query))
         hook.run(self.mssql_query)
         logging.info('Query execution complete.')
+
+
+class MsSqlPlugin(AirflowPlugin):
+    name = 'ms_sql_plugin'
+
+    operators = [
+        MsSQLQueryOperator
+    ]
